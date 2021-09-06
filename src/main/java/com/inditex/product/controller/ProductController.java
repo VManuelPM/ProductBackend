@@ -63,8 +63,7 @@ public class ProductController {
 
     @PutMapping("/update/{idProduct}")
     public ResponseEntity<?> updateProduct(@PathVariable("idProduct") int idProduct, @Valid @RequestBody ProductDTO product) {
-        boolean pExists = productList.stream()
-                .anyMatch(p -> p.getId() == idProduct);
+        boolean pExists = utils.pExists(productList, idProduct);
 
         boolean pNameExists = productList.stream()
                 .anyMatch(p -> p.getName().equals(product.getName()));
@@ -89,8 +88,7 @@ public class ProductController {
 
     @DeleteMapping("/delete/{idProduct}")
     public ResponseEntity<?> deleteProduct(@PathVariable("idProduct") int idProduct) {
-        boolean pExists = productList.stream()
-                .anyMatch(p -> p.getId() == idProduct);
+        boolean pExists = utils.pExists(productList, idProduct);
         if (!pExists)
             return new ResponseEntity(new MensajeDTO("Product not found"), HttpStatus.NOT_FOUND);
 

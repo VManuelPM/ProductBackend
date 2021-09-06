@@ -25,4 +25,13 @@ public class Utils {
         }
         return products;
     }
+
+    public boolean pExists(List<Product> productList, int idProduct){
+        boolean pExists = productList.stream()
+                .anyMatch(p -> p.getId() == idProduct);
+        if(pExists){
+            return true;
+        }
+        return false;
+    }
 }
