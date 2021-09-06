@@ -1,6 +1,6 @@
 # Product Backend
 
-Java project with Spring Boot
+Java 11 project with Spring Boot
 
 ## Installation
 
