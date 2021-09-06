@@ -1,6 +1,6 @@
 # Product Backend
 
-Java project
+Java project with Spring Boot
 
 ## Installation
 
