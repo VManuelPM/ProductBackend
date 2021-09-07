@@ -6,20 +6,37 @@
 	},
 	"item": [
 		{
-			"name": "GetByParam",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "http://localhost:8080/products/getBy/Camiseta número1"
-			},
-			"response": []
-		},
-		{
 			"name": "Get all Products",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8080/products/all"
+				"url": "http://localhost:8080/products"
+			},
+			"response": []
+		},
+		{
+			"name": "GetByParam",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/products/search?id=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "0"
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -30,14 +47,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 10,\r\n    \"name\": \"Camiseta 0\",\r\n    \"description\": \"Camiseta de 10\"\r\n}",
+					"raw": "{\r\n    \"id\": 10,\r\n    \"name\": \"Camiseta 10\",\r\n    \"description\": \"Camiseta de 10\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:8080/products/add"
+				"url": "http://localhost:8080/products"
 			},
 			"response": []
 		},
@@ -55,7 +72,7 @@
 						}
 					}
 				},
-				"url": "http://localhost:8080/products/update/0"
+				"url": "http://localhost:8080/products/2"
 			},
 			"response": []
 		},
@@ -64,7 +81,60 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://localhost:8080/products/delete/0"
+				"url": "http://localhost:8080/products/0"
+			},
+			"response": []
+		},
+		{
+			"name": "GetByTwoParams",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/products/search?id=0&name=Camiseta número 1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "0"
+						},
+						{
+							"key": "name",
+							"value": "Camiseta número 1"
+						},
+						{
+							"key": "description",
+							"value": "Camiseta con estampado del número 0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product Async",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 9,\r\n    \"name\": \"Camiseta 9\",\r\n    \"description\": \"Camiseta 9\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/products/async"
 			},
 			"response": []
 		}
