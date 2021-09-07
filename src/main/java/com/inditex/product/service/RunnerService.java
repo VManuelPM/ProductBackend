@@ -1,15 +1,18 @@
-package com.inditex.product.utils;
+package com.inditex.product.service;
 
 import com.inditex.product.entity.Product;
+import com.inditex.product.repository.RunnerRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Utils {
+@Service
+public class RunnerService implements RunnerRepository {
 
-  private List<Product> products;
+  public List<Product> products;
 
   public List<Product> createObjects() {
     products = new ArrayList<>();
@@ -22,9 +25,5 @@ public class Utils {
       products.add(product);
     }
     return products;
-  }
-
-  public List<Product> concatListProducts(List<Product> listOne, List<Product> listTwo) {
-    return Stream.concat(listOne.stream(), listTwo.stream()).collect(Collectors.toList());
   }
 }

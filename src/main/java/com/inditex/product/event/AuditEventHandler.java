@@ -10,18 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditEventHandler {
 
-    @SneakyThrows
-    @EventListener
-    @Async
-    public void handleEvent(AuditEvent<LogData> auditEvent){
+  @SneakyThrows
+  @EventListener
+  @Async
+  public void handleEvent(AuditEvent<LogData> auditEvent) {
 
-        //API CALL
-        // Instead of call Security API I print the message
+    // API CALL
+    // Instead of call Security API I print the message
 
-        System.out.println(
-                new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(auditEvent.getData())
-        );
-    }
+    System.out.println(
+        new ObjectMapper()
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(auditEvent.getData()));
+  }
 }

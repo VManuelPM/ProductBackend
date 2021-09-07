@@ -8,8 +8,8 @@ class MensajeDTOTest {
 
     @Test
     void getMensaje() {
-        MensajeDTO mensajeDTO = new MensajeDTO("test");
-        mensajeDTO.setMensaje("test");
-        assertEquals("test", mensajeDTO.getMensaje());
+        MessageDTO messageDTO = new MessageDTO("test");
+        messageDTO.setMensaje("test");
+        assertEquals("test", messageDTO.getMensaje());
     }
 }

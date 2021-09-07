@@ -10,13 +10,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class Product {
-    @NotNull
-    @Min(0)
-    private int id;
-    @NotNull
-    @NotBlank
-    private String name;
-    @NotNull
-    @NotBlank
-    private String description;
+  @NotNull
+  @Min(0)
+  private int id;
+
+  @NotNull @NotBlank private String name;
+  @NotNull @NotBlank private String description;
 }

@@ -5,8 +5,6 @@ import lombok.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class MensajeDTO {
-
-    @NonNull
-    private String mensaje;
+public class MessageDTO {
+  @NonNull private String mensaje;
 }

@@ -14,18 +14,16 @@ import java.util.Map;
 @Component
 public class AuditEventPublisher {
 
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+  @Autowired private ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishEvent(String message) {
-        Map<String, String> dataMap = new LinkedHashMap<>();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.
-                getRequestAttributes()).getRequest();
-        dataMap.put("host", request.getHeader("host"));
-        dataMap.put("user-agent", request.getHeader("User - Agent"));
-        dataMap.put("Message", message);
-        applicationEventPublisher.publishEvent(new AuditEvent<LogData>(
-                LogData.builder().data(dataMap).build()
-        ));
-    }
+  public void publishEvent(String message) {
+    Map<String, String> dataMap = new LinkedHashMap<>();
+    HttpServletRequest request =
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    dataMap.put("host", request.getHeader("host"));
+    dataMap.put("user-agent", request.getHeader("User - Agent"));
+    dataMap.put("Message", message);
+    applicationEventPublisher.publishEvent(
+        new AuditEvent<LogData>(LogData.builder().data(dataMap).build()));
+  }
 }

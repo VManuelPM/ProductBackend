@@ -1,9 +1,10 @@
 package com.inditex.product.controller;
 
-import com.inditex.product.dto.MensajeDTO;
+import com.inditex.product.dto.MessageDTO;
 import com.inditex.product.dto.ProductDTO;
 import com.inditex.product.entity.Product;
-import com.inditex.product.event.AuditEventPublisher;
+import com.inditex.product.service.ProductService;
+import com.inditex.product.service.RunnerService;
 import com.inditex.product.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,88 +14,92 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import java.security.ProtectionDomain;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-    private List<Product> productList;
-    private Utils utils;
-    private Set<ConstraintViolation<Product>> violations;
-    private Set<ConstraintViolation<ProductDTO>> violationsDto;
+  @Autowired private ProductService productService;
+  @Autowired private RunnerService runnerService;
 
-    @Autowired
-    private AuditEventPublisher auditEventPublisher;
+  private List<Product> productList;
+  private Utils utils;
+  private Set<ConstraintViolation<Product>> violations;
+  private Set<ConstraintViolation<ProductDTO>> violationsDto;
 
-    public ProductController() {
-        utils = new Utils();
-        productList = utils.createObjects();
+  @PostConstruct
+  public void load() {
+    utils = new Utils();
+    productList = runnerService.createObjects();
+  }
+
+  @GetMapping("")
+  public ResponseEntity<List<Product>> getProducts() {
+    return new ResponseEntity<>(productList, HttpStatus.OK);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<?> getProductsByParameter(@RequestParam Map<String, String> params) {
+
+    List<Product> products = productService.getProductsByParameter(productList, params);
+    if (products != null) {
+      return new ResponseEntity(products, HttpStatus.OK);
     }
+    return new ResponseEntity(new MessageDTO("Products not found"), HttpStatus.NOT_FOUND);
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Product>> getProducts() {
-        return new ResponseEntity<List<Product>>(productList, HttpStatus.OK);
-    }
+  }
 
-    @GetMapping("/getBy/{param}")
-    public ResponseEntity<?> getProductsByParameter(@PathVariable("param") String param) {
-        List<Product> products = productList.stream()
-                .filter(p -> String.valueOf(p.getId()).equals(param)
-                        || p.getName().contains(param)
-                        || p.getDescription().equals(param)).collect(Collectors.toList());
-        return new ResponseEntity(products, HttpStatus.OK);
-    }
+  @PostMapping("")
+  public ResponseEntity<?> saveProduct(@Valid @RequestBody Product product) {
 
-    @PostMapping("/add")
-    public ResponseEntity<?> saveProduct(@Valid @RequestBody Product product) {
-        boolean pExists = productList.stream()
-                .anyMatch(p -> p.getId() == product.getId()
-                        || p.getName().equals(product.getName()));
-        if (pExists)
-            return new ResponseEntity(new MensajeDTO("Product already exists"), HttpStatus.CONFLICT);
-        productList.add(product);
-        //Event listener publish event to send security information
-        auditEventPublisher.publishEvent("Product ".concat(product.getName()).concat(" saved"));
-        return new ResponseEntity<>(new MensajeDTO("Product ".concat(product.getName()).concat(" added")), HttpStatus.CREATED);
-    }
+    boolean pExists = productService.findProduct(productList, product);
+    if (pExists)
+      return new ResponseEntity(new MessageDTO("Product already exists"), HttpStatus.CONFLICT);
+    productList = productService.addProduct(productList, product);
+    return new ResponseEntity<>(
+            new MessageDTO("Product ".concat(product.getName()).concat(" added")), HttpStatus.CREATED);
+  }
 
-    @PutMapping("/update/{idProduct}")
-    public ResponseEntity<?> updateProduct(@PathVariable("idProduct") int idProduct, @Valid @RequestBody ProductDTO product) {
-        boolean pExists = utils.pExists(productList, idProduct);
+  @PostMapping("/async")
+  public ResponseEntity<?> saveProductAsync(@Valid @RequestBody Product product) {
 
-        boolean pNameExists = productList.stream()
-                .anyMatch(p -> p.getName().equals(product.getName()));
+    boolean pExists = productService.findProduct(productList, product);
+    if (pExists)
+      return new ResponseEntity(new MessageDTO("Product already exists"), HttpStatus.CONFLICT);
+    productList = productService.addProductAsync(productList, product);
+    return new ResponseEntity<>(
+        new MessageDTO("Product ".concat(product.getName()).concat(" added")), HttpStatus.CREATED);
+  }
 
-        if (!pExists)
-            return new ResponseEntity(new MensajeDTO("Product not found"), HttpStatus.NOT_FOUND);
+  @PutMapping("/{idProduct}")
+  public ResponseEntity<?> updateProduct(
+      @PathVariable("idProduct") int idProduct, @Valid @RequestBody ProductDTO product) {
 
-        if (pNameExists)
-            return new ResponseEntity(new MensajeDTO("Product with the name "
-                    .concat(product.getName())
-                    .concat(" already exists")), HttpStatus.CONFLICT);
+    boolean pExists = productService.findProductById(productList, idProduct);
+    boolean pNameExists = productService.findByProductName(productList, product);
+    if (!pExists)
+      return new ResponseEntity(new MessageDTO("Product not found"), HttpStatus.NOT_FOUND);
+    if (pNameExists)
+      return new ResponseEntity(
+          new MessageDTO(
+              "Product with the name ".concat(product.getName()).concat(" already exists")),
+          HttpStatus.CONFLICT);
+    productList = productService.updateProduct(productList, idProduct, product);
+    return new ResponseEntity(
+        new MessageDTO("Product has been successfully updated"), HttpStatus.OK);
+  }
 
-        productList.stream().
-                filter(p -> p.getId() == idProduct)
-                .forEach(p -> {
-                    p.setName(product.getName());
-                    p.setDescription(product.getDescription());
-                });
+  @DeleteMapping("/{idProduct}")
+  public ResponseEntity<?> deleteProduct(@PathVariable("idProduct") int idProduct) {
 
-        return new ResponseEntity(new MensajeDTO("Product has been successfully updated"), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/delete/{idProduct}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("idProduct") int idProduct) {
-        boolean pExists = utils.pExists(productList, idProduct);
-        if (!pExists)
-            return new ResponseEntity(new MensajeDTO("Product not found"), HttpStatus.NOT_FOUND);
-
-        productList.removeIf(p -> p.getId() == idProduct);
-        return new ResponseEntity(new MensajeDTO("Product has been successfully deleted"), HttpStatus.OK);
-    }
-
-
+    boolean pExists = productService.findProductById(productList, idProduct);
+    if (!pExists)
+      return new ResponseEntity(new MessageDTO("Product not found"), HttpStatus.NOT_FOUND);
+    productList = productService.deleteProduct(productList, idProduct);
+    return new ResponseEntity(
+        new MessageDTO("Product has been successfully deleted"), HttpStatus.OK);
+  }
 }
