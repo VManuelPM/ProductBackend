@@ -92,7 +92,8 @@ class ProductControllerIntegrationTest {
   void getProductsByParameter() throws Exception {
     product.setId(Constants.ID_CAMISETA_UPDATE);
     product.setName(Constants.NAME_UPDATE);
-    RequestBuilder request = MockMvcRequestBuilders.get("/products/search?id="+Constants.ID_CAMISETA_UPDATE);
+    RequestBuilder request =
+        MockMvcRequestBuilders.get("/products/search?id=" + Constants.ID_CAMISETA_UPDATE);
     MvcResult result = mockMvc.perform(request).andReturn();
     assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
     assertThat(result.getResponse().getContentAsString(StandardCharsets.UTF_8))
@@ -125,7 +126,7 @@ class ProductControllerIntegrationTest {
   void updateProduct() throws Exception {
     productDTO.setName(Constants.NAME_UPDATE);
     RequestBuilder request =
-        MockMvcRequestBuilders.put("/products/"+Constants.ID_CAMISETA_UPDATE)
+        MockMvcRequestBuilders.put("/products/" + Constants.ID_CAMISETA_UPDATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(productDTOJacksonTester.write(productDTO).getJson());
     MvcResult result = mockMvc.perform(request).andReturn();
@@ -135,7 +136,7 @@ class ProductControllerIntegrationTest {
   @Test
   void updateProductNotFound() throws Exception {
     RequestBuilder request =
-        MockMvcRequestBuilders.put("/products/"+Constants.ID_CAMISETA_ADD)
+        MockMvcRequestBuilders.put("/products/" + Constants.ID_CAMISETA_ADD)
             .contentType(MediaType.APPLICATION_JSON)
             .content(productDTOJacksonTester.write(productDTO).getJson());
     MvcResult result = mockMvc.perform(request).andReturn();
@@ -146,7 +147,7 @@ class ProductControllerIntegrationTest {
   void updateProductNameExists() throws Exception {
     productDTO.setName(Constants.NAME_UPDATE);
     RequestBuilder request =
-        MockMvcRequestBuilders.put("/products/"+Constants.ID_CAMISETA_UPDATE)
+        MockMvcRequestBuilders.put("/products/" + Constants.ID_CAMISETA_UPDATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(productDTOJacksonTester.write(productDTO).getJson());
     MvcResult result = mockMvc.perform(request).andReturn();

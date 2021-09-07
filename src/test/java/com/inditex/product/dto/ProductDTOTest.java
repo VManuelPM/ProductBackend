@@ -7,22 +7,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProductDTOTest {
 
-    private ProductDTO productDTO;
+  private ProductDTO productDTO;
 
-    @BeforeEach
-    void setUp() {
-        productDTO = new ProductDTO();
-    }
+  @BeforeEach
+  void setUp() {
+    productDTO = new ProductDTO();
+  }
 
-    @Test
-    public void testGetAndSetName(){
-        productDTO.setName("test");
-        assertEquals("test", productDTO.getName());
-    }
+  @Test
+  public void testGetAndSetName() {
+    productDTO.setName("test");
+    assertEquals("test", productDTO.getName());
+  }
 
-    @Test
-    public void testGetAndSetDescription(){
-        productDTO.setDescription("test");
-        assertEquals("test", productDTO.getDescription());
-    }
+  @Test
+  public void testGetAndSetDescription() {
+    productDTO.setDescription("test");
+    assertEquals("test", productDTO.getDescription());
+  }
 }
